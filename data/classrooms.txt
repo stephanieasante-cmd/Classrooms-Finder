@@ -1,0 +1,12 @@
+ROOM-001	Lecture Room A	Science Block	1	40	1	Projector,Whiteboard,Power outlets	A medium-sized room suited to tutorials and focused group study.
+ROOM-002	Lecture Room B	Main Block	2	60	0	Whiteboard,Air conditioning	A large teaching room currently marked unavailable in this sample dataset.
+ROOM-003	Seminar Room 104	Library Annex	1	18	1	Whiteboard,Power outlets	A compact space for collaborative work and seminar discussions.
+ROOM-004	Computer Lab 2	Technology Centre	2	32	1	Projector,Power outlets,Air conditioning	A computer lab-style room for technology-related group activities.
+ROOM-005	Tutorial Room 3	Science Block	0	12	0	Whiteboard	A small room suitable for tutorials and short meetings.
+ROOM-006	Conference Room East	Administration Block	1	24	1	Projector,Whiteboard,Air conditioning	A meeting space for student project discussions and presentations.
+ROOM-007	Lecture Theatre 1	Main Block	0	120	1	Projector,Whiteboard,Air conditioning	A high-capacity lecture theatre for larger study groups.
+ROOM-008	Study Room 12	Library Annex	2	8	1	Whiteboard,Power outlets	A small quiet room for a few students working together.
+ROOM-009	Workshop Room C	Technology Centre	1	28	0	Projector,Power outlets	A flexible room intended for practical workshops and team activities.
+ROOM-010	Tutorial Room 205	Arts Block	2	20	1	Whiteboard,Air conditioning	A general-purpose room for tutorials, reading groups, and meetings.
+ROOM-011	Discussion Room North	Administration Block	0	10	1	Whiteboard	A simple discussion space for small student teams.
+ROOM-012	Lecture Room C	Arts Block	1	45	0	Projector,Whiteboard	A classroom with presentation equipment; currently marked unavailable in the sample data.

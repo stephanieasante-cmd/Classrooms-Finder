@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Find suitable campus classrooms using sample availability data.">
+  <title>Campus Classroom Availability Finder</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <header class="site-header">
+    <a class="brand" href="#home" aria-label="Campus Classroom Finder home">
+      <span class="brand-mark" aria-hidden="true">CC</span>
+      <span><strong>Campus Finder</strong><small>Study spaces, simplified</small></span>
+    </a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="#home" data-nav="home" class="nav-link active">Overview</a>
+      <a href="#directory" data-nav="directory" class="nav-link">Classrooms</a>
+      <a href="#search-queue" data-nav="search-queue" class="nav-link">Search queue</a>
+      <a href="#manage" data-nav="manage" class="nav-link">Manage rooms</a>
+    </nav>
+  </header>
+
+  <main id="main-content">
+    <section id="home" class="hero section-shell">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="eyebrow-dot"></span> CAMPUS SPACE DIRECTORY</p>
+        <h1>Find your next<br><span>study space.</span></h1>
+        <p class="hero-description">Discover a classroom that fits your group, your campus, and the way you want to work.</p>
+        <form id="hero-search-form" class="hero-search" role="search">
+          <label class="sr-only" for="hero-search">Search room or building</label>
+          <span class="search-icon" aria-hidden="true">⌕</span>
+          <input id="hero-search" type="search" placeholder="Try “Science Block” or “Room 101”" autocomplete="off">
+          <button class="button button-primary" type="submit">Find a room <span aria-hidden="true">→</span></button>
+        </form>
+        <p class="sample-note"><span aria-hidden="true">ⓘ</span> Demo project with fictional sample data — not live occupancy information.</p>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
+        <div class="art-building"><div class="building-roof"></div><div class="building-body"><div class="building-columns"><i></i><i></i><i></i><i></i></div><div class="building-steps"></div></div></div>
+        <div class="floating-card floating-card-top"><span class="floating-icon">✓</span><span><strong>Space for your group</strong><small>Match capacity in seconds</small></span></div>
+        <div class="floating-card floating-card-bottom"><span class="mini-status"></span><span><strong id="hero-available-count">—</strong><small>sample rooms available</small></span></div>
+        <span class="art-spark spark-one">✳</span><span class="art-spark spark-two">✦</span>
+      </div>
+    </section>
+
+    <section class="stats-grid section-shell" aria-label="Classroom summary">
+      <article class="stat-card"><span class="stat-icon icon-blue" aria-hidden="true">▦</span><div><p>Total rooms</p><strong id="stat-total">0</strong></div><span class="stat-caption">in the directory</span></article>
+      <article class="stat-card"><span class="stat-icon icon-green" aria-hidden="true">✓</span><div><p>Available</p><strong id="stat-available">0</strong></div><span class="stat-caption">marked available</span></article>
+      <article class="stat-card"><span class="stat-icon icon-orange" aria-hidden="true">◷</span><div><p>Unavailable</p><strong id="stat-unavailable">0</strong></div><span class="stat-caption">currently marked busy</span></article>
+      <article class="stat-card"><span class="stat-icon icon-purple" aria-hidden="true">♧</span><div><p>Total seats</p><strong id="stat-seats">0</strong></div><span class="stat-caption">across listed rooms</span></article>
+    </section>
+
+    <section id="directory" class="directory-section section-shell">
+      <div class="section-heading">
+        <div><p class="eyebrow">EXPLORE CAMPUS</p><h2>Classroom directory</h2><p class="section-subtitle">Search, compare, and find the right space for your next session.</p></div>
+        <span class="demo-badge">Sample data</span>
+      </div>
+      <div class="filter-panel">
+        <div class="filter-field search-field"><label for="directory-search">Search rooms</label><input id="directory-search" type="search" placeholder="Room name, number, or building"></div>
+        <div class="filter-field"><label for="availability-filter">Availability</label><select id="availability-filter"><option value="all">All classrooms</option><option value="available">Available only</option><option value="unavailable">Unavailable only</option></select></div>
+        <div class="filter-field"><label for="building-filter">Building</label><select id="building-filter"><option value="all">All buildings</option></select></div>
+        <div class="filter-field capacity-field"><label for="group-size">Group size</label><input id="group-size" type="number" min="1" step="1" inputmode="numeric" placeholder="e.g. 12"></div>
+        <div class="filter-field"><label for="sort-filter">Sort by</label><select id="sort-filter"><option value="name">Room name (A–Z)</option><option value="capacity-asc">Capacity (low to high)</option><option value="capacity-desc">Capacity (high to low)</option></select></div>
+        <button id="reset-filters" class="button button-quiet reset-button" type="button">Reset filters</button>
+        <p id="group-size-error" class="field-error filter-error" aria-live="polite"></p>
+      </div>
+      <div class="results-toolbar"><p id="results-count" aria-live="polite">Showing all classrooms</p><span id="matching-label" class="matching-label"></span></div>
+      <div id="classroom-grid" class="classroom-grid" aria-live="polite" aria-busy="false"></div>
+      <div id="empty-state" class="empty-state" hidden><div class="empty-icon" aria-hidden="true">⌕</div><h3>No classrooms found</h3><p>Try a different search, building, or group size.</p><button id="empty-reset" class="button button-secondary" type="button">Clear filters</button></div>
+    </section>
+
+
+    <section id="search-queue" class="queue-section section-shell">
+      <div class="section-heading"><div><p class="eyebrow">QUEUE DATA STRUCTURE</p><h2>Classroom search queue</h2><p class="section-subtitle">Queue classroom-search requests and process them in FIFO order: first in, first out.</p></div><span class="demo-badge">FIFO queue</span></div>
+      <div class="queue-layout">
+        <form id="search-queue-form" class="queue-form"><h3>Add a search request</h3><p class="queue-help">Set criteria for the C++ backend to search. This is a search request—not student registration or a booking.</p>
+          <div class="form-grid">
+            <div class="form-field full-width"><label for="queue-query">Room / keyword</label><input id="queue-query" name="query" maxlength="100" placeholder="e.g. CALC or Science Block"></div>
+            <div class="form-field"><label for="queue-availability">Availability</label><select id="queue-availability" name="availability"><option value="available">Available only</option><option value="all">All classrooms</option><option value="unavailable">Unavailable only</option></select></div>
+            <div class="form-field"><label for="queue-building">Building</label><select id="queue-building" name="building"><option value="all">All buildings</option></select></div>
+            <div class="form-field"><label for="queue-group-size">Minimum seats needed</label><input id="queue-group-size" name="groupSize" type="number" min="1" max="10000" step="1" placeholder="Optional"></div>
+            <div class="form-field"><label for="queue-sort">Sort results by</label><select id="queue-sort" name="sort"><option value="name">Room name (A–Z)</option><option value="capacity-asc">Capacity (low to high)</option><option value="capacity-desc">Capacity (high to low)</option></select></div>
+          </div><button class="button button-primary" type="submit">Add search to queue →</button><p id="queue-form-status" class="form-status" role="status" aria-live="polite"></p>
+        </form>
+        <div class="queue-panel"><div class="queue-panel-heading"><div><h3>Requests waiting to be processed</h3><p>Requests are processed in the order they were added.</p></div><span id="queue-count" class="queue-count">0</span></div>
+          <ol id="queue-list" class="queue-list"><li class="queue-empty">The queue is empty. Add a search request to begin.</li></ol>
+          <div class="queue-actions"><button id="process-next-search" class="button button-primary" type="button">Process next search</button><button id="refresh-search-queue" class="button button-quiet" type="button">Refresh queue</button></div>
+          <p id="queue-result-status" class="queue-result-status" role="status" aria-live="polite">Processed search results will appear here.</p><div id="queue-results" class="queue-results" hidden></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="manage" class="manage-section">
+      <div class="section-shell manage-layout">
+        <div class="manage-intro"><p class="eyebrow">DEMO ADMIN TOOLS</p><h2>Keep the directory<br>up to date.</h2><p>Add fictional rooms, update their details, or change the sample availability state. Changes are stored by the C++ server in a text file.</p><div class="notice-box"><strong>Demonstration only</strong><span>This interface has no login or server-side permissions. It is not a secure university administration system.</span></div><button id="reset-data" class="button button-outline" type="button">Reset sample data</button><p id="storage-status" class="storage-status" role="status">Connecting to the C++ server…</p></div>
+        <div class="manage-card">
+          <div class="manage-card-heading"><div><h3 id="form-title">Add a classroom</h3><p>Fields marked with * are required.</p></div><span class="manage-symbol" aria-hidden="true">＋</span></div>
+          <form id="classroom-form" novalidate>
+            <input id="edit-id" type="hidden">
+            <div class="form-grid">
+              <div class="form-field"><label for="room-name">Room name / number *</label><input id="room-name" name="name" required maxlength="80" placeholder="e.g. Seminar Room 104"><small class="field-error" id="name-error"></small></div>
+              <div class="form-field"><label for="room-building">Building *</label><input id="room-building" name="building" required maxlength="80" placeholder="e.g. Science Block"><small class="field-error" id="building-error"></small></div>
+              <div class="form-field"><label for="room-floor">Floor</label><input id="room-floor" name="floor" type="number" min="0" max="100" step="1" placeholder="e.g. 2"><small class="field-error" id="floor-error"></small></div>
+              <div class="form-field"><label for="room-capacity">Seating capacity *</label><input id="room-capacity" name="capacity" type="number" min="1" max="10000" step="1" required placeholder="e.g. 30"><small class="field-error" id="capacity-error"></small></div>
+              <div class="form-field full-width"><label for="room-facilities">Facilities <span>(comma-separated)</span></label><input id="room-facilities" name="facilities" maxlength="250" placeholder="Projector, Whiteboard, Power outlets"></div>
+              <div class="form-field full-width"><label for="room-description">Description</label><textarea id="room-description" name="description" rows="3" maxlength="300" placeholder="A short description of the space"></textarea></div>
+              <div class="form-field full-width availability-toggle"><label for="room-available">Availability status</label><select id="room-available" name="available"><option value="true">Available</option><option value="false">Unavailable</option></select></div>
+            </div>
+            <div class="form-actions"><button id="save-room" class="button button-primary" type="submit">Add classroom <span aria-hidden="true">→</span></button><button id="cancel-edit" class="button button-quiet" type="button" hidden>Cancel edit</button></div>
+            <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="section-shell footer-inner"><a class="brand footer-brand" href="#home"><span class="brand-mark" aria-hidden="true">CC</span><span><strong>Campus Finder</strong><small>Built as a DSA learning project</small></span></a><p>Fictional classroom data · No live timetable integration</p><a href="#home" class="back-top">Back to top ↑</a></div></footer>
+
+  <dialog id="room-dialog" class="room-dialog" aria-labelledby="dialog-room-name"><button id="dialog-close" class="dialog-close" type="button" aria-label="Close classroom details">×</button><div id="dialog-content"></div></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
